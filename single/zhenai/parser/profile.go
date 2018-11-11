@@ -1,10 +1,11 @@
 package parser
 
 import (
+	"crawler/single/engine"
+	"crawler/single/model"
 	"regexp"
 	"strconv"
-	"crawler/crawler-single/model"
-	"crawler/crawler-single/engine"
+
 )
 
 var marriageRe = regexp.MustCompile(

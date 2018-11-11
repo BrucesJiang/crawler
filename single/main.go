@@ -1,8 +1,8 @@
 package main
 
 import (
-	"crawler/crawler-single/zhenai/parser"
-	"crawler/crawler-single/engine"
+	"crawler/single/engine"
+	"crawler/single/zhenai/parser"
 )
 
 

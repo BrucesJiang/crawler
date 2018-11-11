@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"crawler/crawler-single/model"
+	"crawler/single/model"
 	"io/ioutil"
 	"testing"
 )
