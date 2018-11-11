@@ -1,8 +1,9 @@
 package engine
 
 import (
+	"crawler/crawler-single/fetcher"
 	"log"
-	"crawler-single/fetcher"
+
 )
 
 func Run(seeds ...Request) {

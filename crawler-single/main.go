@@ -1,9 +1,10 @@
 package main
 
 import (
-	"crawler-single/zhenai/parser"
-	"crawler-single/engine"
+	"crawler/crawler-single/zhenai/parser"
+	"crawler/crawler-single/engine"
 )
+
 
 func main() {
 	engine.Run(engine.Request{

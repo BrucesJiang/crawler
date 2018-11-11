@@ -1,11 +1,11 @@
 package parser
 
 import (
+	"crawler/crawler-single/model"
 	"io/ioutil"
 	"testing"
-	"crawler-single/model"
-
 )
+
 
 func TestParseProfile(t *testing.T) {
 	contents, err := ioutil.ReadFile("user.html")
