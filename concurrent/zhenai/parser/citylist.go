@@ -1,7 +1,8 @@
 package parser
 
 import (
-	"crawler/single/engine"
+	"crawler/concurrent/engine"
+	"fmt"
 	"regexp"
 
 )
@@ -23,10 +24,10 @@ func ParseCityList(contents []byte) engine.ParseResult{
 			result.Requests, 
 			engine.Request{
 				Url: string(m[1]),
-				ParserFunc: ParseCity,
+				ParseFunc: engine.NilParser,
 			},
 		)
-		//fmt.Printf("City: %s, URL: %s\n", m[2], m[1])
+		fmt.Printf("City: %s, URL: %s\n", m[2], m[1])
 
 		// limit --
 		// if limit == 0 {

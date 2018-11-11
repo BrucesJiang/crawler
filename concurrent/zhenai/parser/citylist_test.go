@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"crawler/single/fetcher"
 	"testing"
 )
 
