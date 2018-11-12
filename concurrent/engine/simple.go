@@ -1,7 +1,7 @@
 package engine
 
 import (
-	"crawler/single/fetcher"
+	"crawler/concurrent/fetcher"
 	"log"
 )
 
@@ -14,7 +14,7 @@ func Run(seeds ...Request) {
 	}
 
 	//如果队列中还有元素则继续循环
-	for len(requests) < 1 {
+	for len(requests) >= 1 {
 
 		//取元素
 		request := requests[0]
