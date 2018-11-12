@@ -39,7 +39,6 @@ func Fetch(url string) ([]byte, error){
 	utf8Reader := transform.NewReader(resp.Body, e.NewDecoder())
 
 	return ioutil.ReadAll(utf8Reader)
-
 }
 
 
