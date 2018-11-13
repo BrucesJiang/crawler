@@ -2,6 +2,7 @@ package parser
 
 import (
 	"testing"
+	"crawler/concurrent/fetcher"
 )
 
 func TestParseCityList(t *testing.T) {

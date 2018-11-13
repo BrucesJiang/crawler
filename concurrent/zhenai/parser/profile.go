@@ -24,7 +24,7 @@ var workPlaceRe = regexp.MustCompile(
 	`<div class="m-btn purple"[^>]*>工作地:([^<]+)</div>`)
 
 var occupationRe = regexp.MustCompile(
-	`<div class="m-btn purple"[^>]>([^<]+)</div>`)
+	`<div class="m-btn purple"[^>]*>([^<]+)</div>`)
 
 var incomeRe = regexp.MustCompile(
 	`<div class="m-btn purple"[^>]*>月收入:([^<]+)</div>`)
@@ -64,7 +64,7 @@ func ParseProfile(contents []byte) engine.ParseResult {
 	eduction := extractString(contents, eductionRe)
 	profile.Education = eduction
 
-	log.Printf("Got Profile %s\n", profile)
+	log.Printf("Got Profile %v\n", profile)
 	result := engine.ParseResult{
 		Items: []interface{}{profile},
 	}
@@ -72,9 +72,9 @@ func ParseProfile(contents []byte) engine.ParseResult {
 }
 
 func extractString(contents []byte, regexp *regexp.Regexp) string {
-	matches := incomeRe.FindSubmatch(contents)
+	matches := regexp.FindSubmatch(contents)
 
-	if len(matches) <= 2 {
+	if len(matches) >= 2 {
 		return string(matches[1])
 	}else {
 		return ""

@@ -5,7 +5,12 @@ import (
 	"log"
 )
 
-func Run(seeds ...Request) {
+type SimpleEngine struct {
+
+}
+
+
+func (s SimpleEngine)Run(seeds ...Request) {
 	requests := []Request{}
 
 	//将种子放入
@@ -20,22 +25,32 @@ func Run(seeds ...Request) {
 		request := requests[0]
 		requests = requests[1:]
 
-		log.Printf("Got Url :" + request.Url)
-
-		//获取内容
-		content, err := fetcher.Fetch(request.Url)
+		result, err  := Worker(request)
 
 		if err != nil {
-			log.Printf("Fetcher error, fetching is %s, %s\n", request.Url, err)
 			continue
 		}
 
-		parseResult := request.ParseFunc(content)
-		//
-		requests = append(requests, parseResult.Requests...)
+		requests = append(requests, result.Requests...)
 
-		for _, item := range parseResult.Items {
+		for _, item := range result.Items {
 			log.Printf("Got item %s\n", item)
 		}
 	}
+}
+
+
+//Worker
+func Worker(r Request) (ParseResult, error){
+	log.Printf("Got Url :" + r.Url)
+
+	//获取内容
+	content, err := fetcher.Fetch(r.Url)
+
+	if err != nil {
+		log.Printf("Fetcher error, fetching is %s, %s\n", r.Url, err)
+		return ParseResult{}, err
+	}
+
+	return r.ParseFunc(content), nil
 }
