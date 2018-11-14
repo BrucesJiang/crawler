@@ -2,15 +2,15 @@ package main
 
 import (
 	"crawler/concurrent/engine"
-	"crawler/concurrent/zhenai/parser"
 	"crawler/concurrent/scheduler"
+	"crawler/concurrent/zhenai/parser"
 )
 
 
 func main() {
 	e := engine.ConcurrentEngine{
 		Scheduler: &scheduler.SimpleScheduler{},
-		WokerCount:10,
+		WokerCount:100,
 	}
 
 	e.Run(engine.Request{

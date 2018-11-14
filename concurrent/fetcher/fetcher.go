@@ -10,9 +10,13 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
+//突破反爬机制
+var rateLimiter = time.Tick(100 * time.Millisecond)
 func Fetch(url string) ([]byte, error){
+	<- rateLimiter
 	client := &http.Client{}
 
 	req, err := http.NewRequest("GET", url, nil)
