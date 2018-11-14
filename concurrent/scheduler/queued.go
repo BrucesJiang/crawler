@@ -5,27 +5,28 @@ import (
 )
 
 type QueuedScheduler struct {
-	RequestChan chan engine.Request
-	WorkerChan chan chan engine.Request
+	requestChan chan engine.Request
+	workerChan chan chan engine.Request
+}
+
+func (s *QueuedScheduler) WorkerChan() chan engine.Request {
+	// 每个worker都有自己的chan
+	return make(chan engine.Request)
 }
 
 func (s *QueuedScheduler) Submit(r engine.Request) {
-	s.RequestChan <- r
+	s.requestChan <- r
 }
 
 func (s *QueuedScheduler) WorkerReady(r chan engine.Request) {
-	s.WorkerChan <- r
-}
-
-func (s *QueuedScheduler) ConfigureMasterWorkerChan(r chan engine.Request) {
-
+	s.workerChan <- r
 }
 
 
 func (s *QueuedScheduler) Run() {
 	//初始化参量
-	s.RequestChan = make(chan engine.Request)
-	s.WorkerChan = make(chan chan engine.Request)
+	s.requestChan = make(chan engine.Request)
+	s.workerChan = make(chan chan engine.Request)
 
 	go func() {
 		var requestQ []engine.Request
@@ -38,9 +39,9 @@ func (s *QueuedScheduler) Run() {
 				activeWorker = workerQ[0]
 			}
 			select{
-			case r := <- s.RequestChan:
+			case r := <- s.requestChan:
 				requestQ = append(requestQ, r)
-			case w := <- s.WorkerChan:
+			case w := <- s.workerChan:
 				workerQ = append(workerQ, w)
 			case activeWorker <- activeRequest:
 				workerQ = workerQ[1:]
