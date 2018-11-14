@@ -12,17 +12,20 @@ type ConcurrentEngine struct {
 type Scheduler interface {
 	 Submit(Request)
 	 ConfigureMasterWorkerChan(chan Request)
+	 WorkerReady(chan Request)
+	 Run()
 }
 
 
 func (c *ConcurrentEngine) Run(seed ...Request) {
-	in := make(chan  Request)
 	out := make(chan ParseResult)
-	c.Scheduler.ConfigureMasterWorkerChan(in)
+	//in := make(chan  Request)
+	//c.Scheduler.ConfigureMasterWorkerChan(in)
+	c.Scheduler.Run() //在这里创建 in
 
 	//构建多少个Worker, 这个事情应该由Scheduler决定
 	for i := 0;  i < c.WokerCount; i ++ {
-		createWorker(in, out)
+		createWorker(out, c.Scheduler)
 	}
 
 	//等待初始化完毕
@@ -46,10 +49,14 @@ func (c *ConcurrentEngine) Run(seed ...Request) {
 	}
 }
 
-//通过 goroutine创建一个新的Worker工作
-func createWorker(in chan Request, out chan ParseResult) {
+//通过 goroutine创建一个新的Worker工作, 公用一个chan
+func createWorker(out chan ParseResult, s Scheduler) {
+	//每个Worker都有一个chan
+	in := make(chan Request)
 	go func() {
 		for {
+			//tell scheduler I'm ready
+			s.WorkerReady(in)
 			request := <- in
 			result, err := Worker(request)
 			if  err != nil {
