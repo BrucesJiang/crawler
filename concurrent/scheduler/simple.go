@@ -22,5 +22,7 @@ func (s *SimpleScheduler)Submit(r engine.Request) {
 	//如果这个会卡死
 	//s.WorkerChan <- r
 	//解决方案， 使用goroutine去通知,为每一个Request创建goroutine
-	go func() {s.workerChan <- r}()
+	go func() {
+		s.workerChan <- r
+	}()
 }

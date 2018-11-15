@@ -2,7 +2,6 @@ package parser
 
 import (
 	"crawler/concurrent/engine"
-	"log"
 	"regexp"
 )
 
@@ -17,8 +16,8 @@ func ParseCityList(contents []byte) engine.ParseResult{
 	limit := 10
 
 	for _, m := range matches {
-		result.Items = append(
-			result.Items, "City " + string(m[2]))
+		//result.Items = append(
+		//	result.Items, "City " + string(m[2]))
 		result.Requests = append(
 			result.Requests, 
 			engine.Request{
@@ -26,7 +25,7 @@ func ParseCityList(contents []byte) engine.ParseResult{
 				ParseFunc: ParseCity,
 			},
 		)
-		log.Printf("City: %s, URL: %s\n", m[2], m[1])
+		//log.Printf("City: %s, URL: %s\n", m[2], m[1])
 
 		limit --
 		if limit == 0 {

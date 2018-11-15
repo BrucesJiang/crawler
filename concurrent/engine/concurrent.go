@@ -1,12 +1,9 @@
 package engine
 
-import (
-	"log"
-)
-
 type ConcurrentEngine struct {
 	Scheduler Scheduler
 	WokerCount int
+	ItemChan chan interface{}
 }
 
 type Scheduler interface {
@@ -38,11 +35,20 @@ func (c *ConcurrentEngine) Run(seed ...Request) {
 	}
 
 	//接收Worker处理的结果
+	//itemCount := 0
 	for {
 		result := <- out
 
 		for _, item := range result.Items {
-			log.Printf("Got item:  %v\n", item)
+			//log.Printf("Got item #%d:%v\n",itemCount, item)
+			//itemCount++
+
+			//在这里存储记录。但是在这里执行存储操作是要耗费时间的
+			// 我们希望引擎能够尽可能快的脱离当前存储任务，
+			// 进入到下一个条目的获取过程。
+			// 总之,拿到Request和item尽快脱手，不能再这里执行save过程
+			// save(item)
+			go func() {c.ItemChan <- item}()
 		}
 
 		//将新的请求放到调度器
