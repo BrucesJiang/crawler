@@ -15,19 +15,24 @@ func ItemSaver() chan interface{} {
 			item := <- out
 			log.Printf("Item Saver #%d, %v", itemCount, item)
 			itemCount++
-			save(item)
+			_ , err := save(item)
+
+			if err != nil {
+				log.Printf("Item saver: error " + " saveing %v: %v", item, err)
+			}
 		}
 	}()
 	return out
 }
 
-func save(item interface{}) {
+func save(item interface{}) (id string, err error){
 	client, err := elastic.NewClient(
 		//must turn off in Docker
 		elastic.SetSniff(false))
 
 	if err != nil {
-		panic(err)
+		//panic(err)
+		return "", err
 	}
 
 	resp, err := client.Index().
@@ -36,8 +41,8 @@ func save(item interface{}) {
 		BodyJson(item).
 		Do(context.Background())
 	if err != nil {
-		panic(err)
+		return "", err
 	}
-
-	log.Printf("%+v", resp)
+	//log.Printf("%+v", resp)
+	return resp.Id, nil
 }
