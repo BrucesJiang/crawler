@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"crawler/concurrent/engine"
 	"crawler/concurrent/model"
 	"io/ioutil"
 	"testing"
@@ -14,13 +15,15 @@ func TestParseProfile(t *testing.T) {
 		panic(err)
 	}
 	//fmt.Printf("%s\n", contents)
+	item := engine.Item{}
 	profile := model.Profile{
 		Name: "麦甜",
 		Age: 28,
 		Height: 155,
 		Marriage: "丧偶 ",
 	}
-	result := ParseProfile(contents, &profile)
+	item.Payload = profile
+	result := ParseProfile(contents, &item)
 
 	expected := model.Profile{
 		Name: "麦甜",
@@ -34,7 +37,7 @@ func TestParseProfile(t *testing.T) {
 	}
 
 	for _, p := range result.Items {
-		profile := p.(model.Profile)
+		profile := p.Payload.(model.Profile)
 		if profile != expected {
 			t.Errorf("exptect Profile is %+v; but " +
 				"was %+v\n", expected, profile)

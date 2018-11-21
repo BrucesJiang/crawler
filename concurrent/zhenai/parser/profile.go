@@ -31,7 +31,7 @@ var incomeRe = regexp.MustCompile(
 var xingZuoRe = regexp.MustCompile(
 	`<div class="m-btn purple"[^>]*>([\p{Han}]+)\([0-9.]+-[0-9.]+\)</div>`)
 
-func ParseProfile(contents []byte, profile *model.Profile) engine.ParseResult {
+func ParseProfile(contents []byte, item *engine.Item) engine.ParseResult {
 
 	//profile := model.Profile{}
 
@@ -44,10 +44,17 @@ func ParseProfile(contents []byte, profile *model.Profile) engine.ParseResult {
 	//occupation := extractString(contents, occupationRe)
 	//profile.Occupation = occupation
 	//
+	profile, err := model.FromJsonObj(engine.Item{}.Payload)
+	if err != nil {
+		profile = model.Profile{}
+	}
 	income := extractString(contents, incomeRe)
 	profile.Income = income
+
 	xingZuo := extractString(contents, xingZuoRe)
 	profile.XingZuo = xingZuo
+
+	item.Payload = profile
 	//
 	//eduction := extractString(contents, eductionRe)
 	//profile.Education = eduction
@@ -74,7 +81,9 @@ func ParseProfile(contents []byte, profile *model.Profile) engine.ParseResult {
 
 	log.Printf("Got Profile %+v\n", profile)
 	result := engine.ParseResult{
-		Items: []interface{}{profile},
+		Items: []engine.Item{
+			*item,
+		},
 	}
 	return result
 }

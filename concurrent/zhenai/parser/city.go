@@ -8,8 +8,11 @@ import (
 	"strconv"
 )
 
-var urlRe = regexp.MustCompile(`<a href="(http://album.zhenai.com/u/[0-9]+)"[^>]*>([^<]+)</a>`)
+var urlRe = regexp.MustCompile(`<a href="(http://album.zhenai.com/u/[0-9]+)"[^>]*>[^<]+</a>`)
 
+var nameRe = regexp.MustCompile(`<a href="http://album.zhenai.com/u/[0-9]+"[^>]*>([^<]+)</a>`)
+
+var idRe = regexp.MustCompile(`http://album.zhenai.com/u/([0-9]+)`)
 //const incomingRe = `<td><span class="grayL">月[^<]+</span>([0-9\-]+)元</td>`
 
 var genderRe = regexp.MustCompile(`<td width="180"><span class="grayL">性别[\pP]+</span>([^<]+)</td>`)
@@ -24,7 +27,9 @@ var heightRe = regexp.MustCompile(`<td width="180"><span class="grayL">身[^<]+<
 
 func ParseCity(contents []byte) engine.ParseResult{
 
-	urls := extraceFields(contents, urlRe)
+	urls := extractField(contents, urlRe)
+	names := extractField(contents, nameRe)
+	ids := extractField(contents, idRe)
 	genders := extractField(contents, genderRe)
 	ages := extractField(contents, ageRe)
 	mars := extractField(contents, marriageRe)
@@ -32,10 +37,9 @@ func ParseCity(contents []byte) engine.ParseResult{
 	heights := extractField(contents, heightRe)
 
 	result := engine.ParseResult{}
-	profile := model.Profile{}
-	for i, m := range urls[0] {
-		profile.Url = m
-		profile.Name = urls[1][i]
+	for i, m := range urls {
+		profile := model.Profile{}
+		profile.Name = names[i]
 		profile.Gender = genders[i]
 		profile.WorkPlace = workplaces[i]
 		age, err := strconv.Atoi(ages[i])
@@ -49,6 +53,12 @@ func ParseCity(contents []byte) engine.ParseResult{
 			profile.Height = height
 		}
 		log.Printf("Profile %+v\n", profile)
+		item := engine.Item{
+			Url: urls[i],
+			Id: ids[i],
+			Payload: profile,
+		}
+
 		//name := string(m[2])
 		//result.Items = append(
 		//	result.Items,
@@ -58,7 +68,7 @@ func ParseCity(contents []byte) engine.ParseResult{
 			engine.Request{
 				Url: m,
 				ParseFunc: func(bytes []byte) engine.ParseResult {
-					return ParseProfile(bytes, &profile)
+					return ParseProfile(bytes, &item)
 				},
 			})
 		//log.Printf("Got User %v\n", profile)
@@ -67,27 +77,27 @@ func ParseCity(contents []byte) engine.ParseResult{
 	return result
 }
 
-func extraceFields(contents []byte, regexp *regexp.Regexp) [][]string {
-	matches := regexp.FindAllSubmatch(contents, -1)
-
-	//log.Printf("Item: %s, Number: %d\n", matches, len(matches))
-
-	ms := make([][]string, 0)
-	urls := make([]string, 0)
-	names := make([]string,0)
-	for _, m := range matches {
-		if len(m) >= 3 {
-			urls = append(urls, string(m[1]))
-			names = append(names, string(m[2]))
-		}else {
-			urls = append(urls, "")
-			names = append(names, "")
-		}
-	}
-	ms = append(ms, urls)
-	ms = append(ms, names)
-	return ms
-}
+//func extraceFields(contents []byte, regexp *regexp.Regexp) [][]string {
+//	matches := regexp.FindAllSubmatch(contents, -1)
+//
+//	//log.Printf("Item: %s, Number: %d\n", matches, len(matches))
+//
+//	ms := make([][]string, 0)
+//	urls := make([]string, 0)
+//	names := make([]string,0)
+//	for _, m := range matches {
+//		if len(m) >= 3 {
+//			urls = append(urls, string(m[1]))
+//			names = append(names, string(m[2]))
+//		}else {
+//			urls = append(urls, "")
+//			names = append(names, "")
+//		}
+//	}
+//	ms = append(ms, urls)
+//	ms = append(ms, names)
+//	return ms
+//}
 
 func extractField(contents []byte, regexp *regexp.Regexp) []string {
 	matches := regexp.FindAllSubmatch(contents, -1)
