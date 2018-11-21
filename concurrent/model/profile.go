@@ -9,8 +9,8 @@ type Profile struct {
 	Height     int      //身高
 	Income     string   //收入
 	Marriage   string   //婚况
-	Education  string   //教育
-	Occupation string   //职业
+	//Education  string   //教育
+	//Occupation string   //职业
 	XingZuo    string   //星座
 	WorkPlace  string   //居住地
 }

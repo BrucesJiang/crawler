@@ -3,6 +3,7 @@ package parser
 import (
 	"crawler/concurrent/engine"
 	"crawler/concurrent/model"
+	"log"
 	"regexp"
 )
 
@@ -28,9 +29,9 @@ var incomeRe = regexp.MustCompile(
 	`<div class="m-btn purple"[^>]*>月收入:([^<]+)</div>`)
 
 var xingZuoRe = regexp.MustCompile(
- `<div class="m-btn purple"[^>]*>(/[.\x{4e00}-\x{9fa5}0-9]+\([0-9]-[0-9]\))</div>`)
+	`<div class="m-btn purple"[^>]*>([\p{Han}]+)\([0-9.]+-[0-9.]+\)</div>`)
 
-func ParseProfile(contents []byte, profile model.Profile) engine.ParseResult {
+func ParseProfile(contents []byte, profile *model.Profile) engine.ParseResult {
 
 	//profile := model.Profile{}
 
@@ -71,7 +72,7 @@ func ParseProfile(contents []byte, profile model.Profile) engine.ParseResult {
 
 
 
-	//log.Printf("Got Profile %v\n", profile)
+	log.Printf("Got Profile %+v\n", profile)
 	result := engine.ParseResult{
 		Items: []interface{}{profile},
 	}

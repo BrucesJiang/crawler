@@ -14,7 +14,13 @@ func TestParseProfile(t *testing.T) {
 		panic(err)
 	}
 	//fmt.Printf("%s\n", contents)
-	result := ParseProfile(contents)
+	profile := model.Profile{
+		Name: "麦甜",
+		Age: 28,
+		Height: 155,
+		Marriage: "丧偶 ",
+	}
+	result := ParseProfile(contents, &profile)
 
 	expected := model.Profile{
 		Name: "麦甜",
@@ -23,8 +29,8 @@ func TestParseProfile(t *testing.T) {
 		Income: "5-8千",
 		Marriage: "丧偶 ",
 		WorkPlace: "阿坝红原",
-		Occupation: "人事主管",
-		Education: "中专",
+		//Occupation: "人事主管",
+		//Education: "中专",
 	}
 
 	for _, p := range result.Items {
