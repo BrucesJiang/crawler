@@ -4,15 +4,15 @@ import (
 	"crawler/concurrent/engine"
 	"crawler/concurrent/frontend/model"
 	common "crawler/concurrent/model"
-	template2 "html/template"
 	"os"
 	"testing"
 )
 
 func TestTemplate(t *testing.T) {
 
-	 template := template2.Must(
-	 	template2.ParseFiles("template.html"))
+	 //template := template2.Must(
+	 //	template2.ParseFiles("template.html"))
+	view := CreateSearchResultView("template.html")
 
 	 out, err := os.Create("template_test.html")
 	 page := model.SearchResult{}
@@ -38,7 +38,8 @@ func TestTemplate(t *testing.T) {
 		page.Items = append(page.Items, item)
 	}
 	 //err := template.Execute(os.Stdout, page)
-	 err = template.Execute(out, page)
+	 //err = template.Execute(out, page)
+	 err = view.Render(out, page)
 	 if err != nil {
 	 	panic(err)
 	 }
