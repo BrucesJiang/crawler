@@ -2,6 +2,7 @@ package parser
 
 import (
 	"crawler/single/engine"
+	"log"
 	"regexp"
 )
 
@@ -25,7 +26,7 @@ func ParseCityList(contents []byte) engine.ParseResult{
 				ParserFunc: ParseCity,
 			},
 		)
-		//fmt.Printf("City: %s, URL: %s\n", m[2], m[1])
+		log.Printf("City: %s, URL: %s\n", m[2], m[1])
 
 		limit --
 		if limit == 0 {
